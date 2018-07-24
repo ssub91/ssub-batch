@@ -13,6 +13,8 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean;
+import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
@@ -41,7 +43,7 @@ public class SpringBatchConfig {
 	    DataSource dataSource = new DataSource();
 	    
 	    dataSource.setDriverClassName( "oracle.jdbc.driver.OracleDriver" );
-	    dataSource.setUrl( "jdbc:oracle:thin:@localhost:1521:xe" ) ;
+	    dataSource.setUrl( "jdbc:oracle:thin:@localhost:1521:xe" );
 	    dataSource.setUsername( "hone4" );
 	    dataSource.setPassword( "hone4" );
 	    
@@ -104,10 +106,10 @@ public class SpringBatchConfig {
     }
     
     @Bean
-    public JdbcBatchItemWriter<Person> writer() {
+    public JdbcBatchItemWriter<Person> writer( DataSource datasSource ) {
     	JdbcBatchItemWriter<Person> jdbcBatchItemWriter = new JdbcBatchItemWriter<Person>();
 
-    	jdbcBatchItemWriter.setDataSource( dataSource() );
+    	jdbcBatchItemWriter.setDataSource( datasSource );
     	jdbcBatchItemWriter.setSql( "INSERT INTO person VALUES (person_seq.nextval, :firstName, :lastName)" );
     	jdbcBatchItemWriter.setItemSqlParameterSourceProvider( new BeanPropertyItemSqlParameterSourceProvider<Person>() );
     	
@@ -115,20 +117,20 @@ public class SpringBatchConfig {
     }
     
     @Bean( "job1" )
-    public Job importUserJob() {
+    public Job importUserJob( Step step ) {
     	return jobBuilders.
     			get( "importUserJob" ).
-    			start( step1() ).
+    			start( step ).
     			build();
     }
 
     @Bean
-    public Step step1() {
+    public Step step1( ItemReader<Person> reader, ItemWriter<Person> writer ) {
         return stepBuilders.get( "step1" )
                 .<Person, Person> chunk( 5 )
-                .reader( reader() )
+                .reader( reader )
                 .processor( processor() )
-                .writer( writer() )
+                .writer( writer )
                 .build();
     }    
 }
