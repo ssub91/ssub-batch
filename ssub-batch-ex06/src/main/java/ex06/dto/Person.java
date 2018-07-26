@@ -1,4 +1,4 @@
-package ex06;
+package ex06.dto;
 
 public class Person {
     private String lastName;
