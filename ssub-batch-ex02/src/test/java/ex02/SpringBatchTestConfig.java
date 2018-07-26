@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 public class SpringBatchTestConfig {
     @Bean
     public JobLauncherTestUtils jobLauncherTestUtils( JobRepository jobRepository ) throws Exception {
-        return new JobLauncherTestUtils();
+    	JobLauncherTestUtils jobLauncherTestUtils = new JobLauncherTestUtils();
+    	return jobLauncherTestUtils;
     }
 }
