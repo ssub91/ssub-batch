@@ -1,4 +1,4 @@
-package ex02;
+package ex06;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
@@ -10,12 +10,12 @@ import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteExcep
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-public class Ex02BatchJobRunner {
+public class Ex04BatchJobRunner {
 
 	public static void main(String[] args) {
 		try {
 	
-			AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SpringBatchTestConfig.class);
+			AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SpringBatchConfig.class);
 	
 			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
 			Job job1 = context.getBean("job1", Job.class);
