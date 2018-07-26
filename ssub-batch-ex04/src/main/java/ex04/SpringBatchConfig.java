@@ -1,4 +1,4 @@
-package ex02;
+package ex04;
 
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.springframework.batch.core.Job;
@@ -99,6 +99,11 @@ public class SpringBatchConfig {
     	
     	return flatFileItemReader;
     }
+	
+    @Bean
+    public PersonItemProcessor processor() {
+        return new PersonItemProcessor();
+    }
     
     @Bean
     public JdbcBatchItemWriter<Person> writer( DataSource datasSource ) {
@@ -124,6 +129,7 @@ public class SpringBatchConfig {
         return stepBuilders.get( "step1" )
                 .<Person, Person> chunk( 5 )
                 .reader( reader )
+                .processor( processor() )
                 .writer( writer )
                 .build();
     }    

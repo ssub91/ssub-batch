@@ -19,6 +19,7 @@
 		<module>ssub-batch-ex01</module>
 		<module>ssub-batch-ex02</module>
 		<module>ssub-batch-ex03</module>
+		<module>ssub-batch-ex04</module>
 	</modules>
 
 	<dependencies>

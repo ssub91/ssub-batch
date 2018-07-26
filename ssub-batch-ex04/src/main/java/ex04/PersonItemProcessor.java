@@ -1,4 +1,4 @@
-package ex02;
+package ex04;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
