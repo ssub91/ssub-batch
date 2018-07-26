@@ -16,6 +16,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes=SpringBatchConfig.class)
+/**
+ * 
+ * @author sblee
+ * 
+ * 이 테스트는 chunk 사이즈 즉 태스크릿의 commit-interval 값에 대한 테스트 입니다.
+ *  
+ */
 public class Ex03BatchJobTest {
 	
 	@Autowired
@@ -30,5 +37,4 @@ public class Ex03BatchJobTest {
 		JobExecution jobExecution = jobLauncher.run( job1, new JobParameters() );
 		assertEquals( ExitStatus.COMPLETED, jobExecution.getExitStatus() );
 	}
-
 }

@@ -17,16 +17,9 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
-import org.springframework.batch.item.database.JdbcBatchItemWriter;
-import org.springframework.batch.item.file.FlatFileItemReader;
-import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
-import org.springframework.batch.item.file.mapping.DefaultLineMapper;
-import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -82,42 +75,17 @@ public class SpringBatchConfig {
     }
 
 	@Bean
-    public FlatFileItemReader<Person> reader() {
+    public CustomItemReader reader() {
+		CustomItemReader reader = new CustomItemReader();
+    	return reader;
+    }
 
-    	FlatFileItemReader<Person> flatFileItemReader = new FlatFileItemReader<Person>();
-
-    	flatFileItemReader.setName( "personItemReader" );
-    	flatFileItemReader.setResource( new ClassPathResource( "sample-data.csv" ) );
-        flatFileItemReader.setLineMapper( new DefaultLineMapper<Person>() {{
-        	setLineTokenizer( new DelimitedLineTokenizer() {{
-                setDelimiter( "," );
-                setNames( new String[] { "firstName", "lastName" } );
-            }} );
-        	
-            setFieldSetMapper( new BeanWrapperFieldSetMapper<Person>() {{
-                setTargetType(Person.class);
-            }} );
-        }} );
-    	
-    	return flatFileItemReader;
+	@Bean
+    public CustomItemWriter<Person> writer() {
+		CustomItemWriter<Person> writer = new CustomItemWriter<Person>();
+    	return writer;
     }
 	
-    @Bean
-    public PersonItemProcessor processor() {
-        return new PersonItemProcessor();
-    }
-    
-    @Bean
-    public JdbcBatchItemWriter<Person> writer( DataSource datasSource ) {
-    	JdbcBatchItemWriter<Person> jdbcBatchItemWriter = new JdbcBatchItemWriter<Person>();
-
-    	jdbcBatchItemWriter.setDataSource( datasSource );
-    	jdbcBatchItemWriter.setSql( "INSERT INTO person VALUES (person_seq.nextval, :firstName, :lastName)" );
-    	jdbcBatchItemWriter.setItemSqlParameterSourceProvider( new BeanPropertyItemSqlParameterSourceProvider<Person>() );
-    	
-    	return jdbcBatchItemWriter;
-    }
-    
     @Bean( "job1" )
     public Job importUserJob( Step step ) {
     	return jobBuilders.
@@ -129,9 +97,8 @@ public class SpringBatchConfig {
     @Bean
     public Step step1( ItemReader<Person> reader, ItemWriter<Person> writer ) {
         return stepBuilders.get( "step1" )
-                .<Person, Person> chunk( 5 )
+                .<Person, Person> chunk( 2 )
                 .reader( reader )
-                .processor( processor() )
                 .writer( writer )
                 .build();
     }    
